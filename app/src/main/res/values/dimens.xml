@@ -2,4 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_title_fontsize">24dp</dimen>
+    <dimen name="regular_fontsize">16dp</dimen>
+    <dimen name="togle_button_height">24dp</dimen>
 </resources>
