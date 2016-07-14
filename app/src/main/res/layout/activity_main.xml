@@ -36,7 +36,7 @@
             />
 
         <RadioGroup
-            android:checkedButton="@+id/offer"
+            android:checkedButton="@+id/ASLSetting"
             android:id="@+id/toggleLanguageSetting"
             android:layout_width="match_parent"
             android:layout_height="@dimen/togle_button_height"
@@ -94,7 +94,7 @@
             />
 
         <RadioGroup
-            android:checkedButton="@+id/offer"
+            android:checkedButton="@+id/connectionOffSetting"
             android:id="@+id/toggleConnectionSetting"
             android:layout_width="match_parent"
             android:layout_height="@dimen/togle_button_height"
@@ -133,19 +133,42 @@
         </RadioGroup>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/transcriptHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/settingsThirdRow"
         android:layout_below="@id/settingsSecondRow"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="Transcript"
-        android:textSize="@dimen/activity_title_fontsize"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/transcriptHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="top"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Transcript"
+            android:textSize="@dimen/activity_title_fontsize"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <Button
+            android:id="@+id/clearTranscriptButton"
+            android:layout_width="180dp"
+            android:layout_alignParentRight="true"
+            android:layout_height="35dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Clear Transcript"
+            android:textSize="@dimen/regular_fontsize"
+            android:background="@drawable/button_state"
+            android:shadowColor="@color/white"
+            android:textColor="@color/white"
+            />
+
+    </RelativeLayout>
 
     <EditText
         android:id="@+id/transcriptEditText"
-        android:layout_below="@id/transcriptHeader"
+        android:layout_below="@id/settingsThirdRow"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:text="@string/placeholder_text"/>
