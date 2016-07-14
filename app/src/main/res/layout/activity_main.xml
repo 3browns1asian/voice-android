@@ -151,11 +151,12 @@
         android:text="@string/placeholder_text"/>
 
     <Button
+        android:id="@+id/exportToTxtButton"
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/transcriptEditText"
-        android:text="Export to pdf"
+        android:text="Export to txt"
         android:textSize="@dimen/regular_fontsize"
         android:background="@drawable/button_state"
         android:shadowColor="@color/white"
