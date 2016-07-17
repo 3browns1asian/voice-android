@@ -2,8 +2,10 @@ package com.voice.voice;
 
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +17,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,9 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private Button clearTranscriptButton;
     private Button exportTxtButton;
     private TextToSpeech tts;
+    private Bundle bun;
 
     private boolean aslSelected;
     private boolean connectedToGloves;
+    private Timer timer;
+    private String speech = "This is voice. It is my voice. It is your voice. It is voice for those that don’t have one. Voice is made to help people understand sign language. Right now, sign language translate machines are big and slow. We use machine learning and phone. Voice let people speak naturally, no matter where they are. Because it is just gloves and phone, Voice can give people without one, voice of their own.";
+    private String[] speechArr;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -61,18 +69,63 @@ public class MainActivity extends AppCompatActivity {
         exportTxtButton = (Button) findViewById(R.id.exportToTxtButton);
         exportTxtButton.setOnClickListener(exportButtonListener);
 
-        final Bundle bun = savedInstanceState;
+        bun = savedInstanceState;
         // Text To Speech Module Initializtion
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                String toSpeak = transcriptView.getText().toString();
                 tts.setLanguage(Locale.US);
-
-                tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, bun, null);
+                tts.setSpeechRate(0.80f);
             }
         });
 
+        // SetInterval to handle stream of data
+        speechArr = speech.split(" ");
+
+        runTroughTranscript();
+
+    }
+
+    public void runTroughTranscript() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask(){
+            int count = 0;
+            StringBuilder sent = new StringBuilder();
+
+            @Override
+            public void run(){
+                if (count < speechArr.length) {
+                    if (speechArr[count] == null) return;
+
+                    Log.d("Message", speechArr[count]);
+                    tts.speak(speechArr[count],TextToSpeech.QUEUE_ADD, bun, null);
+                    sent.append(speechArr[count]);
+                    sent.append(" ");
+
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("String", sent.toString());
+                            transcriptView.setText(sent.toString());
+                        }
+                    });
+
+// This is there to buffering it into a sentence before saying it out
+//                    if ((speechArr[count].charAt(speechArr[count].length()-1)) == '.') {
+//                        Log.d("YO", sentence);
+//                        if (tts.isSpeaking()) {
+//                            tts.speak(sentence, TextToSpeech.QUEUE_ADD, bun, null);
+//                        } else {
+//                            tts.speak(sentence, TextToSpeech.QUEUE_FLUSH, bun, null);
+//                        }
+//                        sentence = "";
+//                    }
+                    count += 1;
+                }
+            }
+
+        },0,500);
     }
 
     RadioGroup.OnCheckedChangeListener languageListener = new RadioGroup.OnCheckedChangeListener() {
@@ -103,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             transcriptView.setText("");
+            if (timer != null) {
+                timer.purge();
+                timer.cancel();
+                runTroughTranscript();
+            }
             Toast.makeText(getApplicationContext(),"Successfully exported text file to Downloads Folder",
                     Toast.LENGTH_SHORT).show();
         }
