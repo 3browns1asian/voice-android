@@ -20,6 +20,9 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import app.akexorcist.bluetotohspp.library.BluetoothSPP;
+import app.akexorcist.bluetotohspp.library.BluetoothState;
+
 public class MainActivity extends AppCompatActivity {
 
     private RadioGroup languageSwitch;
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private Timer timer;
     private String speech = "This is voice. It is my voice. It is your voice. It is voice for those that don’t have one. Voice is made to help people understand sign language. Right now, sign language translate machines are big and slow. We use machine learning and phone. Voice let people speak naturally, no matter where they are. Because it is just gloves and phone, Voice can give people without one, voice of their own.";
     private String[] speechArr;
+
+    //TODO: Move to separate file
+    private BluetoothSPP bt;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -82,8 +88,47 @@ public class MainActivity extends AppCompatActivity {
         // SetInterval to handle stream of data
         speechArr = speech.split(" ");
 
+
+        bluetoothSetup();
         runTroughTranscript();
 
+    }
+
+    public void bluetoothSetup() {
+        bt = new BluetoothSPP(getApplicationContext());
+        if (!bt.isBluetoothAvailable() || !bt.isBluetoothEnabled()) {
+            Log.d("Bruh", "Bluetoo is not available");
+        } else {
+            Log.d("Bruh", "Bluetooth is available");
+            bt.setupService();
+            bt.startService(BluetoothState.DEVICE_OTHER);
+            final String[] pairedDevices = bt.getPairedDeviceAddress();
+            Log.d("Paired Device",String.valueOf(bt.getPairedDeviceAddress().length));
+            Log.d("Paired Device", bt.getPairedDeviceAddress()[0].toString());
+
+            bt.connect(pairedDevices[0]);
+            bt.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
+                public void onDeviceConnected(String name, String address) {
+                    // Do something when successfully connected
+                    Log.d("Device connected", "Device Name: " + name + ", Address: " + address);
+                }
+
+                public void onDeviceDisconnected() {
+                    // Do something when connection was disconnected
+                }
+
+                public void onDeviceConnectionFailed() {
+                    // Do something when connection failed
+                    Log.d("Device Failed", "Device Name: " );
+                    bt.connect(pairedDevices[0]);
+                }
+            });
+            bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
+                public void onDataReceived(byte[] data, String message) {
+                    Log.d("Data Received", message);
+                }
+            });
+        }
     }
 
     public void runTroughTranscript() {
@@ -97,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 if (count < speechArr.length) {
                     if (speechArr[count] == null) return;
 
-                    Log.d("Message", speechArr[count]);
+//                    Log.d("Message", speechArr[count]);
                     tts.speak(speechArr[count],TextToSpeech.QUEUE_ADD, bun, null);
                     sent.append(speechArr[count]);
                     sent.append(" ");
@@ -106,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d("String", sent.toString());
+//                            Log.d("String", sent.toString());
                             transcriptView.setText(sent.toString());
                         }
                     });
