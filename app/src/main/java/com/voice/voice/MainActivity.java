@@ -13,6 +13,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -89,9 +91,40 @@ public class MainActivity extends AppCompatActivity {
         speechArr = speech.split(" ");
 
 
-        bluetoothSetup();
+        //bluetoothSetup();
+        final ServerWrapper serverWrapper = new ServerWrapper("https://afternoon-lowlands-52437.herokuapp.com/");
+        serverWrapper.getmSocket().on("connect", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                serverWrapper.sendArduinoData("0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0");
+                String[] simData = simulateArduinoData();
+                for (String str:simData){
+                    serverWrapper.sendArduinoData(str);
+                }
+                Log.d("connected","yo");
+            }
+        });
+        serverWrapper.initConnection();
+
+
         runTroughTranscript();
 
+    }
+
+    // TODO: Remove all this simulation stuff after
+    public String[] simulateArduinoData() {
+        String[] data = {"0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+                "END"};
+        return data;
     }
 
     public void bluetoothSetup() {
