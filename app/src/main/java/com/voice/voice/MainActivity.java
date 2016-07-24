@@ -276,13 +276,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             transcriptView.setText("");
-            if (timer != null) {
-                timer.purge();
-                timer.cancel();
-//                runTroughTranscript();
-            }
-            Toast.makeText(getApplicationContext(),"Successfully exported text file to Downloads Folder",
-                    Toast.LENGTH_SHORT).show();
+            speech = "";
+//            Toast.makeText(getApplicationContext(),"Successfully exported text file to Downloads Folder",
+//                    Toast.LENGTH_SHORT).show();
         }
     };
 
