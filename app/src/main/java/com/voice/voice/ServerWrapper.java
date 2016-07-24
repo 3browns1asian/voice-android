@@ -40,18 +40,18 @@ public class ServerWrapper {
             mSocket.emit("sendSensorData", data);
             Log.d("Message Sent", data);
         }
-        Log.d("Send Arduino data", data);
+//        Log.d("Send Arduino data", data);
     }
 
     private void initReceivers() {
 
-        mSocket.on("predictedValue", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                String message = String.valueOf(args[0]);
-                Log.d("Predicted Value", message);
-            }
-        });
+//        mSocket.on("predictedValue", new Emitter.Listener() {
+//            @Override
+//            public void call(Object... args) {
+//                String message = String.valueOf(args[0]);
+//                Log.d("Predicted Value", message);
+//            }
+//        });
 
         mSocket.on("receivedSensorData", new Emitter.Listener() {
             @Override
