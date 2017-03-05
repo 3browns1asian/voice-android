@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private Button exportTxtButton;
     private TextToSpeech tts;
     private Bundle bun;
+    private View statusRectangle;
     private boolean sendData;
+    private boolean statusFlag = false;
 
     private boolean aslSelected;
     private boolean connectedToGloves;
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         connectionOnSetting = (RadioButton) findViewById(R.id.connectionOnSetting);
         connectionOffSetting = (RadioButton) findViewById(R.id.connectionOffSetting);
         connectionsSwitch.setOnCheckedChangeListener(connectionListener);
+
+        statusRectangle = findViewById(R.id.rectangle_status);
 
         // Transcript view initialization
         transcriptView = (EditText) findViewById(R.id.transcriptEditText);
@@ -148,12 +152,16 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.d("Data Received", message);
                     if (message.equals("END") && connectedToGloves && !sendData && bt.getConnectedDeviceAddress() != null) {
                         sendData = true;
+                        statusRectangle.setBackgroundColor(0xFF0000);
+                    } else if (connectedToGloves) {
+                        statusRectangle.setBackgroundColor(0x00FF00);
                     }
                     if (sendData) {
                         serverWrapper.sendArduinoData(message.toString());
                     }
                     if (!connectedToGloves && message.equals("END")) {
                         sendData = false;
+                        statusRectangle.setBackgroundColor(0xFF0000);
                     }
                 }
             });
