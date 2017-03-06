@@ -1,5 +1,6 @@
 package com.voice.voice;
 
+import android.content.Context;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.UiThread;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+import android.os.Vibrator;
 
 import com.github.nkzawa.emitter.Emitter;
 
@@ -41,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private View statusRectangle;
     private boolean sendData;
     private boolean statusFlag = false;
+    Vibrator vibrate;
+    long[] pattern = {0, 200, 200, 200};
+
 
     private boolean aslSelected;
     private boolean connectedToGloves;
@@ -49,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     private String[] speechArr;
     private ServerWrapper serverWrapper;
 
-    //TODO: Move to separate file
     private BluetoothSPP bt;
 
     @Override
@@ -93,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        vibrate = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         bluetoothSetup();
 
@@ -111,9 +116,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         serverWrapper.initConnection();
-
-
-//        runTroughTranscript();
 
     }
 
@@ -150,18 +152,36 @@ public class MainActivity extends AppCompatActivity {
             bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
                 public void onDataReceived(byte[] data, String message) {
 //                    Log.d("Data Received", message);
+                    // Marks the beginning of data transmission for a particular sign
+                    if (statusFlag && connectedToGloves) {
+                        statusFlag = false;
+                        vibrate.vibrate(300);
+                    }
+
+                    // Vibrate and change traffic signal based on data we get from arduino
                     if (message.equals("END") && connectedToGloves && !sendData && bt.getConnectedDeviceAddress() != null) {
                         sendData = true;
                         statusRectangle.setBackgroundColor(0xFF0000);
+                        vibrate.vibrate(pattern, -1);
+                        statusFlag = true;
+                    } else if (message.equals("END") && connectedToGloves) {
+                        statusRectangle.setBackgroundColor(0xFF0000);
+                        vibrate.vibrate(pattern, -1);
+                        statusFlag = true;
                     } else if (connectedToGloves) {
                         statusRectangle.setBackgroundColor(0x00FF00);
                     }
+
+                    //send data to the server
                     if (sendData) {
                         serverWrapper.sendArduinoData(message.toString());
                     }
+
+                    // make sure to stop sending the data when connection is off
                     if (!connectedToGloves && message.equals("END")) {
                         sendData = false;
                         statusRectangle.setBackgroundColor(0xFF0000);
+                        vibrate.vibrate(pattern, -1);
                     }
                 }
             });
