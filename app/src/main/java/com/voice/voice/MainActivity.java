@@ -1,6 +1,7 @@
 package com.voice.voice;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.UiThread;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean sendData;
     private boolean statusFlag = false;
     Vibrator vibrate;
-    long[] pattern = {0, 200, 200, 200};
+    long[] pattern = {0, 100, 100, 100};
 
 
     private boolean aslSelected;
@@ -151,25 +152,25 @@ public class MainActivity extends AppCompatActivity {
             });
             bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
                 public void onDataReceived(byte[] data, String message) {
-//                    Log.d("Data Received", message);
+                    Log.d("Data Received", message);
                     // Marks the beginning of data transmission for a particular sign
                     if (statusFlag && connectedToGloves) {
                         statusFlag = false;
-                        vibrate.vibrate(300);
+                        vibrate.vibrate(200);
                     }
 
                     // Vibrate and change traffic signal based on data we get from arduino
                     if (message.equals("END") && connectedToGloves && !sendData && bt.getConnectedDeviceAddress() != null) {
                         sendData = true;
-                        statusRectangle.setBackgroundColor(0xFF0000);
+                        statusRectangle.setBackgroundColor(Color.RED);
                         vibrate.vibrate(pattern, -1);
                         statusFlag = true;
                     } else if (message.equals("END") && connectedToGloves) {
-                        statusRectangle.setBackgroundColor(0xFF0000);
+                        statusRectangle.setBackgroundColor(Color.RED);
                         vibrate.vibrate(pattern, -1);
                         statusFlag = true;
                     } else if (connectedToGloves) {
-                        statusRectangle.setBackgroundColor(0x00FF00);
+                        statusRectangle.setBackgroundColor(Color.GREEN);
                     }
 
                     //send data to the server
@@ -180,8 +181,8 @@ public class MainActivity extends AppCompatActivity {
                     // make sure to stop sending the data when connection is off
                     if (!connectedToGloves && message.equals("END")) {
                         sendData = false;
-                        statusRectangle.setBackgroundColor(0xFF0000);
-                        vibrate.vibrate(pattern, -1);
+                        statusRectangle.setBackgroundColor(Color.RED);
+//                        vibrate.vibrate(pattern, -1);
                     }
                 }
             });
