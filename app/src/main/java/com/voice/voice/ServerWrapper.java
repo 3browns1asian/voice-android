@@ -1,6 +1,7 @@
 package com.voice.voice;
 
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -38,9 +39,16 @@ public class ServerWrapper {
     public void sendArduinoData(String data) {
         if (mSocket != null && mSocket.connected()) {
             mSocket.emit("sendSensorData", data);
-            Log.d("Message Sent", data);
+            Log.d("Arduino Data Sent", data);
         }
 //        Log.d("Send Arduino data", data);
+    }
+
+    public  void sendLanguageChangeNotification(String language) {
+        if (mSocket != null && mSocket.connected()) {
+            mSocket.emit("languageChange", language);
+            Log.d("Language change", language);
+        }
     }
 
     private void initReceivers() {
