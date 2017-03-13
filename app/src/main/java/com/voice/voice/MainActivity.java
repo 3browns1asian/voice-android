@@ -21,6 +21,8 @@ import com.github.nkzawa.emitter.Emitter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private ServerWrapper serverWrapper;
 
     private BluetoothSPP bt;
+    private HashMap<String, String> JSLMapping = new HashMap<String, String>();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -88,6 +91,19 @@ public class MainActivity extends AppCompatActivity {
         exportTxtButton = (Button) findViewById(R.id.exportToTxtButton);
         exportTxtButton.setOnClickListener(exportButtonListener);
 
+        // JSL Character Mapping
+        JSLMapping.put("sa", "サ");
+        JSLMapping.put("yo", "ロ");
+        JSLMapping.put("na", "ハ");
+        JSLMapping.put("ra", "ワ");
+        JSLMapping.put("ko", "こ");
+        JSLMapping.put("n", "ん");
+        JSLMapping.put("ni", "に");
+        JSLMapping.put("chi", "ち");
+        JSLMapping.put("wa", "は");
+
+
+
         bun = savedInstanceState;
         // Text To Speech Module Initializtion
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -112,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 String message = String.valueOf(args[0]);
+                if (!aslSelected) {
+                    message = JSLMapping.get(message);
+                }
                 Log.d("Predicted Value", message);
                 appendNewText(message);
             }
