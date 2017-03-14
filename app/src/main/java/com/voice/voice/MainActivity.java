@@ -92,15 +92,15 @@ public class MainActivity extends AppCompatActivity {
         exportTxtButton.setOnClickListener(exportButtonListener);
 
         // JSL Character Mapping
-        JSLMapping.put("sa", "サ");
-        JSLMapping.put("yo", "ロ");
-        JSLMapping.put("na", "ハ");
-        JSLMapping.put("ra", "ワ");
+        JSLMapping.put("sa", "さ");
+        JSLMapping.put("yo", "よ");
+        JSLMapping.put("na", "な");
+        JSLMapping.put("ra", "ら");
         JSLMapping.put("ko", "こ");
         JSLMapping.put("n", "ん");
         JSLMapping.put("ni", "に");
         JSLMapping.put("chi", "ち");
-        JSLMapping.put("wa", "は");
+        JSLMapping.put("wa", "わ");
 
 
 
