@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 Log.d("Server Connected","yo");
+                serverWrapper.sendLanguageChangeNotification("ASL");
             }
         }).on("predictedValue", new Emitter.Listener() {
             @Override
